@@ -13,6 +13,7 @@ type Server interface {
 	SetPrefix(prefix string)
 	SetLogger(logger *log.Logger)
 	SetPort(port string)
+	AddRoute(key string, route Route)
 	Serve()
 }
 
@@ -36,6 +37,11 @@ func NewServer() *server {
 // Set server routes.
 func (s *server) SetRoutes(routes Routes) {
 	s.routes = routes
+}
+
+// Add a route in server
+func (s *server) AddRoute(key string, route Route) {
+	s.routes[key] = route
 }
 
 // Set route prefix.

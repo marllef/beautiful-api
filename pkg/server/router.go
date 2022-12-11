@@ -1,6 +1,5 @@
 package server
 
-
 type Router interface {
 	GetRoutes() Routes
 	AddRoute(key string, route Route)
@@ -8,14 +7,13 @@ type Router interface {
 }
 
 type router struct {
-	routes Routes
+	routes     Routes
 	controlers []interface{}
-	server Server
 }
 
-func NewRouter(httpServer Server ,controlers ...interface{}) *router {
+func NewRouter(controlers ...interface{}) *router {
 	return &router{
-		routes: make(Routes),
+		routes:     make(Routes),
 		controlers: controlers,
 	}
 }
