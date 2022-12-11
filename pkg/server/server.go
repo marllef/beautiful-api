@@ -59,7 +59,7 @@ func (s *server) SetPort(port string) {
 	s.port = port
 }
 
-func (s *server) Serve() {
+func (s *server) Serve() error {
 	addr := fmt.Sprintf(":%s", s.port)
 	s.logger.Infof("Servidor iniciado na porta 0.0.0.0:%s", s.port)
 
@@ -76,5 +76,5 @@ func (s *server) Serve() {
 		s.logger.Infof("New Route Available [%s]", path)
 	}
 
-	http.ListenAndServe(addr, router)
+	return http.ListenAndServe(addr, router)
 }
