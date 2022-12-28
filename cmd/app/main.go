@@ -4,10 +4,11 @@ import (
 	"flag"
 
 	"marllef/beautiful-api/configs"
-	"marllef/beautiful-api/database"
+	"marllef/beautiful-api/frameworks/database"
+	"marllef/beautiful-api/frameworks/server"
+	entities "marllef/beautiful-api/internal/app/models/entity"
 	"marllef/beautiful-api/internal/app/registry"
 	logger "marllef/beautiful-api/pkg/mylogger"
-	"marllef/beautiful-api/pkg/server"
 )
 
 var log = logger.Default()
@@ -16,15 +17,21 @@ var log = logger.Default()
 func main() {
 	flag.Parse()
 
-	err := configs.LoadEnvs()
-	if err != nil {
+	if err := configs.LoadEnvs(); err != nil {
 		log.Errorf("Failed on read configs: %v", err)
 		return
 	}
 
-	db, err := database.NewDB()
+	// Create new connection of database
+	db, err := database.NewDatabase()
 	if err != nil {
 		log.Errorf("Failed on connect to database: %v", err)
+		return
+	}
+
+	// Migrate database
+	if err = db.AutoMigrate(entities.Product{}, entities.User{}); err != nil {
+		log.Errorf("Failed on migrate database: %v", err)
 		return
 	}
 

@@ -11,7 +11,20 @@ import (
 
 var dbDialect = flag.String("db-dialect", "sqlite", "set database dialect, sqlite by default.")
 
-func NewDB() (container *gorm.DB, err error) {
+type Database interface {}
+
+type database struct {
+	container *gorm.DB
+	logLevel  int
+	Database
+}
+
+func NewDatabase() (container *gorm.DB, err error) {
+	
+	if err = configs.LoadEnvs(); err != nil {
+		return nil, err
+	}
+
 	container, err = gorm.Open(sqlite.Open(configs.Env.DatabaseUrl), &gorm.Config{
 		Logger: dbLog.Default.LogMode(dbLog.Silent),
 	})
@@ -20,6 +33,5 @@ func NewDB() (container *gorm.DB, err error) {
 		return nil, err
 	}
 
-	
 	return container, nil
 }

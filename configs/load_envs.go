@@ -2,12 +2,13 @@ package configs
 
 import (
 	"flag"
-	"fmt"
+	"marllef/beautiful-api/pkg/path"
 
 	"github.com/spf13/viper"
 )
 
-var envPath = flag.String("env-path", ".", "Defines the path of the env file")
+
+var envPath = flag.String("env-path", path.Root, "Defines the path of the env file")
 var envName = flag.String("env-name", "local", "Defines the name of the env file")
 var envType = flag.String("env-type", "env", "Defines the type of the env file")
 var Env *configs
@@ -30,12 +31,10 @@ func loadEnvFile() (config *configs, err error) {
 	viper.SetConfigType(*envType)
 
 	if err := viper.ReadInConfig(); err != nil {
-		err = fmt.Errorf("Failed to read env file - %v", err)
 		return nil, err
 	}
 
 	if err := viper.Unmarshal(&config); err != nil {
-		err = fmt.Errorf("Failed to unmarshal envs - %v", err)
 		return nil, err
 	}
 

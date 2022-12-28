@@ -13,6 +13,7 @@ type Registry interface {
 
 type registry struct {
 	container *gorm.DB
+	Registry
 }
 
 func NewRegistry(db *gorm.DB) *registry {

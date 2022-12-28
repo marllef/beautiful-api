@@ -19,17 +19,30 @@ type Server interface {
 
 type server struct {
 	routes Routes
+	router *mux.Router
 	port   string
 	logger *log.Logger
 	prefix string
+	Server
 }
 
 // Create a new server.
-func NewServer() *server {
+func NewServer(params ...mux.Router) *server {
+	if len(params) == 1 {
+		return &server{
+			routes: make(Routes),
+			port:   "3005",
+			prefix: "",
+			router: &params[0],
+			logger: log.Default(),
+		}
+	}
+
 	return &server{
 		routes: make(Routes),
 		port:   "3005",
 		prefix: "",
+		router: mux.NewRouter(),
 		logger: log.Default(),
 	}
 }
@@ -39,7 +52,12 @@ func (s *server) SetRoutes(routes Routes) {
 	s.routes = routes
 }
 
-// Add a route in server
+// Set server routes.
+func (s *server) GetRoutes() Routes{
+	return s.routes
+}
+
+// Add a route in server.
 func (s *server) AddRoute(key string, route Route) {
 	s.routes[key] = route
 }
@@ -47,6 +65,11 @@ func (s *server) AddRoute(key string, route Route) {
 // Set route prefix.
 func (s *server) SetPrefix(prefix string) {
 	s.prefix = fmt.Sprintf("%s", prefix)
+}
+
+// Get route prefix.
+func (s *server) GetPrefix() string {
+	return s.prefix
 }
 
 // Set server logger.
@@ -59,14 +82,17 @@ func (s *server) SetPort(port string) {
 	s.port = port
 }
 
+// Get server port.
+func (s *server) GetPort(port string) string {
+	return s.port
+}
+
 func (s *server) Serve() error {
 	addr := fmt.Sprintf(":%s", s.port)
 	s.logger.Infof("Servidor iniciado na porta 0.0.0.0:%s", s.port)
 
-	router := mux.NewRouter()
-
 	for key, route := range s.routes {
-		subRouter := router.Name(key).Subrouter()
+		subRouter := s.router.Name(key).Subrouter()
 		subRouter.Use(route.Middlewares...)
 
 		path := fmt.Sprintf("%s%s", s.prefix, route.Path)
@@ -76,5 +102,5 @@ func (s *server) Serve() error {
 		s.logger.Infof("New Route Available [%s]", path)
 	}
 
-	return http.ListenAndServe(addr, router)
+	return http.ListenAndServe(addr, s.router)
 }
