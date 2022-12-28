@@ -1,8 +1,9 @@
 package services
 
 import (
-	"marllef/beautiful-api/internal/app/models/entity"
 	"marllef/beautiful-api/internal/app/interfaces/repository"
+	entities "marllef/beautiful-api/internal/app/models/entity"
+
 	"gorm.io/gorm"
 )
 
@@ -17,7 +18,7 @@ type productService struct {
 }
 
 func NewProductServices(db *gorm.DB) *productService {
-	repo := repository.GetRepository(db)
+	repo := repository.GetProductRepository(db)
 	return &productService{
 		repository: repo,
 	}

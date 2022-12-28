@@ -18,7 +18,7 @@ type userService struct {
 }
 
 func NewUserServices(db *gorm.DB) *userService {
-	repo := repository.GetRepository(db)
+	repo := repository.GetUserRepository(db)
 	return &userService{
 		repository: repo,
 	}

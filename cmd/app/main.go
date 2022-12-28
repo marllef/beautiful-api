@@ -29,31 +29,24 @@ func main() {
 		return
 	}
 
-	// Migrate database
+	// Migrate database, add entities to migrate here
 	if err = db.AutoMigrate(entities.Product{}, entities.User{}); err != nil {
 		log.Errorf("Failed on migrate database: %v", err)
 		return
 	}
 
+	// New registry instance
 	reg := registry.NewRegistry(db)
 
 	// Create new instance of server
 	app := server.NewServer()
 	app.SetPrefix("/api")
 
-	// Add product routes on server
-	product := reg.NewProductController()
-	app.AddRoute("product", server.Route{
-		Path:       "/product",
-		Controller: product.GetAll,
-		Methods:    []string{"GET"},
-	})
-
-	app.AddRoute("products", server.Route{
-		Path:       "/product/{id}",
-		Controller: product.GetOne,
-		Methods:    []string{"GET"},
-	})
+	// Registry routes
+	routes := Routes(reg)
+	
+	// Set routes
+	app.SetRoutes(routes)
 
 	// Start server
 	err = app.Serve()

@@ -3,6 +3,7 @@ package repository
 import (
 	"marllef/beautiful-api/internal/app/models/dto"
 	entities "marllef/beautiful-api/internal/app/models/entity"
+
 	"gorm.io/gorm"
 )
 
@@ -19,7 +20,7 @@ type productRepository struct {
 	ProductRepository
 }
 
-func GetRepository(container *gorm.DB) (repo *productRepository) {
+func GetProductRepository(container *gorm.DB) (repo *productRepository) {
 	db := container.Model(entities.Product{}).Session(&gorm.Session{})
 	return &productRepository{
 		container: db,

@@ -19,9 +19,9 @@ type userRepository struct {
 	ProductRepository
 }
 
-func GetUserRepository(container *gorm.DB) (repo *productRepository) {
+func GetUserRepository(container *gorm.DB) (repo *userRepository) {
 	db := container.Model(entities.Product{}).Session(&gorm.Session{})
-	return &productRepository{
+	return &userRepository{
 		container: db,
 	}
 }
