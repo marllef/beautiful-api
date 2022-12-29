@@ -9,6 +9,7 @@ var applicationRegistry *registry
 
 type Registry interface {
 	NewProductController() controller.ProductController
+	NewBibleController() (controller.BibleController, error)
 }
 
 type registry struct {
